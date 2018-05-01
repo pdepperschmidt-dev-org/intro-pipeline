@@ -6,18 +6,12 @@ pipeline {
     stage('Say Hello') {
       steps {
         echo "Hello ${params.Name}!"
+        sh 'java -version'
         echo "${TEST_USER_USR}"
         echo "${TEST_USER_PSW}"
-        sh 'java -version'
       }
     }
-      stage('Checkpoint') {
-         agent none
-         steps {
-            checkpoint 'Checkpoint'
-         }
-      }
-       stage('Testing') {
+    stage('Testing') {
       failFast true
       parallel {
         stage('Java 8') {
@@ -40,18 +34,19 @@ pipeline {
         }
       }
     }
-
   }
   environment {
-    MY_NAME = 'Phil'
+    MY_NAME = 'Mary'
     TEST_USER = credentials('test-user')
-  }
-  parameters {
-    string(name: 'Name', defaultValue: 'whoever you are', description: 'Who should I say hi to?')
   }
   post {
     aborted {
       echo 'Why didn\'t you push my button?'
+      
     }
+    
+  }
+  parameters {
+    string(name: 'Name', defaultValue: 'whoever you are', description: 'Who should I say hi to?')
   }
 }
